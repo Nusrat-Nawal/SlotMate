@@ -4,7 +4,7 @@
 
 .hero {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 .hero h1 {
@@ -16,23 +16,38 @@
     margin-top: 10px;
 }
 
-.cards-section {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
+.snapshot, .insight {
+  margin-bottom: 20px;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
 }
 
 .card {
-    width: 300px;
-    padding: 20px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    transition: 0.3s;
+  width: 250px;
+  padding: 20px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 15px;
+  transition: 0.3s;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    border-color: #7c3aed;
+  transform: translateY(-5px);
+  border-color: #7c3aed;
+}
+
+.card button {
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  background: #7c3aed;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
 }
