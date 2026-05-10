@@ -10,51 +10,103 @@
 </head>
 <body>
 
+    <div class="bg-glow glow1"></div>
+    <div class="bg-glow glow2"></div>
+
     <div class="bg"></div>
 
     <header class="navbar">
+        <div class="brand"> 
         <div class="logo">SlotMate</div>
         <div class="slogan">Better Slots, Better Semester</div>
-
+       </div>
         <div class="nav-links">
-            <a href="#">Dashboard</a>
-            <a href="#">Matches</a>
-            <a href="#">Profile</a>
+            <a href="#">🏠︎ Home</a>
+            <a href="#">+ Create Request</a> 
+            <a href="#">🗐 My Requests</a>
+            <a href="#">♡ Matches</a>
+            <a href="#">🕭 Notifications</a>
+            <a href="#">👤 Profile</a> 
         </div>
     </header>
 
-    <main class="container">
+    <section class="top-info glass-card">
 
-        <section class="hero">
-            <h1>Find Your Perfect Class Partner</h1>
-            <p>Smart course swapping made simple</p>
-        </section>
+       <div class="info-item">
+            Hello, User Name!
+        </div>
+
+       <div class="info-item">
+         Southeast University Bangladesh
+       </div>
+
+       <div class="info-item">
+         Computer Science & Engineering
+        </div>
+
+    </section>
+    
+
+    <main class="container">
 
         <section class="cards">
 
-            <div class="card">
-            <h3>CS101 ↔ Math203</h3>
-            <p>Match Score: 87%</p>
+            <div class="card card-purple">
+            <div class="card-top">
+            <h3>CSE161.2 ↔ CSE181.1</h3>
+            <span class="match-tag">87%</span>
+            </div>
+             <p>Match Score: 87%</p>
+            <div class="compatibility">
+              <div class="bar" style="width:87%" >
+
+              </div>
+            </div>
             <button>Request Swap</button>
              </div>
 
-            <div class="card">
-            <h3>EE201 ↔ CS101</h3>
+            <div class="card card-pink">
+            <div class="card-top">
+            <h3>EEE161.2 ↔ CSE161.2</h3>
+             <span class="match-tag">72%</span>
+            </div>
             <p>Match Score: 72%</p>
+            <div class="compatibility">
+              <div class="bar" style="width: 72%;">
+                
+              </div>
+            </div>
             <button>Request Swap</button>
             </div>
 
-            <div class="card">
-            <h3>Physics ↔ Chemistry</h3>
+            <div class="card card-orange">
+            <div class="card-top">
+            <h3>CSE161.2 ↔ CSE161.3</h3>
+            <span class="match-tag">91%</span>
+            </div>
             <p>Match Score: 91%</p>
+             <div class="compatibility">
+              <div class="bar" style="width: 91%;">
+                
+              </div>
+            </div>
             <button>Request Swap</button>
             </div>
 
     </section>
 
+    <div class="live-feed">
+     Live Match Feed
+     </div>
+
+    <section class="bottom-sections">
+
         <section class="snapshot">
             <div class="glass-card">
-                <h2>Swap Snapshot</h2>
+                <h2>Your Swap Snapshot</h2>
+                <div class="snapshot-circle">
+                    92%
+                </div>
                 <p>Visual match overview</p>
             </div>
         </section>    
@@ -65,6 +117,12 @@
                 <p>Compatibility analysis</p>
             </div>
         </section>
+
+    </section>
+
+    <div class="quick-tip glass-card">
+    ~ Be specific with time preferences to get better matches! ~
+    </div>
 
     </main>
 
