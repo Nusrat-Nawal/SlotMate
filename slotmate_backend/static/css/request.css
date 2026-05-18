@@ -1,0 +1,148 @@
+.container{
+    display:flex;
+    justify-content:center;
+    padding:40px;
+}
+
+/*Main card */
+.request-card{
+    width:100%;
+    max-width:750px;
+    padding:35px;
+    border-radius:26px;
+}
+
+h2{
+    margin-bottom:20px;
+    font-size:28px;
+}
+
+input{
+    width:100%;
+    padding:12px 14px;
+    margin:8px 0;
+    border-radius:12px;
+    border:none;
+    outline:none;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    transition:0.3s;
+    font-size:14px;
+}
+
+input:focus{
+    background:rgba(255,255,255,0.15);
+    transform:scale(1.02);
+}
+
+/*Chip system */
+.chip-group{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:12px 0 20px;
+    margin-bottom:18px;
+}
+
+.chip{
+    padding:10px 14px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    color:white;
+    font-size:14px;
+    cursor:pointer;
+    user-select:none;
+    transition:0.25s;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.chip:hover{
+    background:rgba(255,255,255,0.15);
+    transform:scale(1.05);
+}
+
+/*Selected chip */
+.chip.active{
+    background:linear-gradient(135deg,#8B5CF6,#EC4899);
+    color:white;
+    box-shadow:0 8px 20px rgba(139,92,246,0.3);
+    transform:scale(1.08);
+}
+
+.options{
+    margin-top:25px;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    align-items:center;
+}
+
+.options label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    opacity:0.9;
+    font-size:14px;
+}
+
+.options input[type="checkbox"]{
+    width:16px;
+    height:16px;
+    accent-color:#8B5CF6;
+    margin:0;
+}
+
+.submit-btn{
+    margin-top:30px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#8B5CF6,#EC4899);
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.submit-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(236,72,153,0.35);
+}
+
+.section{
+    margin-top:25px;
+    margin-bottom:25px;
+}
+
+.section h3{
+    margin-bottom:12px;
+    font-size:16px;
+    opacity:0.85;
+}
+
+/*Better UI */
+.chip{
+    will-change: transform;
+}
+
+/*Removing mobile tap highlight */
+input, .chip, .submit-btn{
+    -webkit-tap-highlight-color: transparent;
+}
+
+/*Mobile Responsiveness */
+@media (max-width: 600px){
+    .container{
+        padding:20px;
+    }
+
+    .request-card{
+        padding:20px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+}

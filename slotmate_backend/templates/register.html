@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SlotMate — Register</title>
+
+  {% load static %}
+
+  <link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+</head>
+
+<body>
+
+  <div class="bg-glow glow1"></div>
+  <div class="bg-glow glow2"></div>
+  <div class="bg"></div>
+
+  <div class="register-wrapper">
+
+    <div class="brand-header">
+      <div class="logo">SlotMate</div>
+      <div class="slogan">Better Slots, Better Semester</div>
+    </div>
+
+    <div class="card">
+
+      <h2>Create your account </h2>
+      <p class="subtitle">Join thousands of students swapping smarter</p>
+
+      <div class="steps">
+        <div class="step-dot active"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot active"></div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" placeholder="Rafiq" oninput="clearError('nameError')">
+          <small class="error" id="nameError"></small>
+        </div>
+
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" placeholder="Ahmed">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>University Email</label>
+        <input type="email" placeholder="yourname@university.edu" oninput="clearError('emailError')">
+        <small class="error" id="emailError"></small>
+        <div class="verify-box">
+        <button type="button" class="verify-btn" onclick="sendCode()"> Send Verification Code </button>
+       <input type="text" id="verificationCode" placeholder="Enter verification code" oninput="clearError('verifyError')">
+       <small class="error" id="verifyError"></small>
+
+      </div>
+      </div>
+
+      <div class="field">
+        <label>University</label>
+        <select onchange="clearError('selectError')">
+          <option disabled selected>Select your university</option>
+          <option>BRAC University</option>
+          <option>Northsouth University</option>
+          <option>Eastwest University</option>
+          <option>Ahsanullah University of Science and Technology </option>
+          <option>Southeast University</option>
+        </select>
+         <small class="error" id="selectError"></small>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Department</label>
+         <select id="department" onchange="clearError('DeptError')">
+          <option disabled selected>Select Department</option>
+          <option>CSE</option>
+          <option>EEE</option>
+          <option>BBA</option>
+          <option>LAW</option>
+          <option>English</option>
+          <option>Economics</option>
+          <option>Pharmacy</option>
+          </select>
+          <small class="error" id="DeptError"></small>
+        </div>
+
+        <div class="field">
+          <label>Student ID</label>
+          <input type="text" placeholder="2021200000" oninput="clearError('idError')">
+          <small class="error" id="idError"></small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Exactly 8 letters/numbers" maxlength="8"minlength="8" oninput="validatePassword(this); clearError('passError')">
+          <small class="error" id="passError"></small>
+        </div>
+
+        <div class="field">
+          <label>Confirm Password</label>
+          <input type="password" id="confirmPassword" placeholder="Confirm password" maxlength="8" minlength="8" oninput="validatePassword(this);clearError('confirmPassError')">
+          <small class="error" id="confirmPassError"></small>
+        </div>
+      </div>
+
+      <div class="terms">
+        <input type="checkbox" id="termsCheck">
+        <span>I agree to Terms & Privacy Policy</span>
+      </div>
+      <button class="btn-register" onclick="registerUser()">Sign Up </button>
+
+    </div>
+
+    <p class="login-link">
+      Already have an account? <a href="login.html">Log in</a>
+    </p>
+
+  </div>
+
+<script src="{% static 'js/register.js' %}"></script>
+
+
+</body>
+</html>
