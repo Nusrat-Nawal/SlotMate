@@ -185,9 +185,7 @@ body{
     box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
 }
 
-.field input::placeholder{
-    opacity: 0.4;
-}
+
 
 /* forgot */
 
@@ -346,4 +344,10 @@ body{
    .logo{
       font-size:32px;
    }
+}
+
+
+.field input::placeholder{
+    opacity: 0.4;
+    color: #0f1549
 }
