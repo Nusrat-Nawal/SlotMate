@@ -35,22 +35,25 @@
         <div class="step-dot active"></div>
       </div>
 
+      <form method="POST">
+        {% csrf_token %}
+      
       <div class="row">
         <div class="field">
           <label>First Name</label>
-          <input type="text" placeholder="Rafiq" oninput="clearError('nameError')">
+          <input type="text" name="first_name" placeholder="Anik" oninput="clearError('nameError')">
           <small class="error" id="nameError"></small>
         </div>
 
         <div class="field">
           <label>Last Name</label>
-          <input type="text" placeholder="Ahmed">
+          <input type="text" name="last_name" placeholder="Mahmud">
         </div>
       </div>
 
       <div class="field">
         <label>University Email</label>
-        <input type="email" placeholder="yourname@university.edu" oninput="clearError('emailError')">
+        <input type="email" name="email" placeholder="xyz@university.edu" oninput="clearError('emailError')">
         <small class="error" id="emailError"></small>
         <div class="verify-box">
         <button type="button" class="verify-btn" onclick="sendCode()"> Send Verification Code </button>
@@ -62,13 +65,13 @@
 
       <div class="field">
         <label>University</label>
-        <select onchange="clearError('selectError')">
+        <select  name="university" onchange="clearError('selectError')">
           <option disabled selected>Select your university</option>
           <option>BRAC University</option>
-          <option>Northsouth University</option>
-          <option>Eastwest University</option>
-          <option>Ahsanullah University of Science and Technology </option>
+          <option>North South University</option>
           <option>Southeast University</option>
+          <option>Ahsanullah University of Science and Technology </option>
+          <option>East West University</option>
         </select>
          <small class="error" id="selectError"></small>
       </div>
@@ -76,7 +79,7 @@
       <div class="row">
         <div class="field">
           <label>Department</label>
-         <select id="department" onchange="clearError('DeptError')">
+         <select  name="department" id="department" onchange="clearError('DeptError')">
           <option disabled selected>Select Department</option>
           <option>CSE</option>
           <option>EEE</option>
@@ -89,23 +92,18 @@
           <small class="error" id="DeptError"></small>
         </div>
 
-        <div class="field">
-          <label>Student ID</label>
-          <input type="text" placeholder="2021200000" oninput="clearError('idError')">
-          <small class="error" id="idError"></small>
-        </div>
       </div>
 
       <div class="row">
         <div class="field">
           <label>Password</label>
-          <input type="password" id="password" placeholder="Exactly 8 letters/numbers" maxlength="8"minlength="8" oninput="validatePassword(this); clearError('passError')">
+          <input type="password" name="password" id="password" placeholder="Exactly 8 letters/numbers" maxlength="8"minlength="8" oninput="validatePassword(this); clearError('passError')">
           <small class="error" id="passError"></small>
         </div>
 
         <div class="field">
           <label>Confirm Password</label>
-          <input type="password" id="confirmPassword" placeholder="Confirm password" maxlength="8" minlength="8" oninput="validatePassword(this);clearError('confirmPassError')">
+          <input type="password" name="confirm_password" id="confirmPassword" placeholder="Confirm password" maxlength="8" minlength="8" oninput="validatePassword(this);clearError('confirmPassError')">
           <small class="error" id="confirmPassError"></small>
         </div>
       </div>
@@ -114,12 +112,14 @@
         <input type="checkbox" id="termsCheck">
         <span>I agree to Terms & Privacy Policy</span>
       </div>
-      <button class="btn-register" onclick="registerUser()">Sign Up </button>
+      
+      <button type="submit" class="btn-register">Sign Up </button>
 
+      </form>
     </div>
 
     <p class="login-link">
-      Already have an account? <a href="login.html">Log in</a>
+      Already have an account? <a href="/login/">Log in</a>
     </p>
 
   </div>
