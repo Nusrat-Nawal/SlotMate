@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Requests</title>
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/my-requests.css' %}">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="logo-small">SlotMate</div>
+        <div class="slogan-small">My Swap Requests</div>
+    </div>
+
+    <button class="action-btn" onclick="openDeleteModal()">
+        🗑 Delete Selected
+    </button>
+</header>
+
+<div class="container">
+
+{% if requests %}
+
+<div class="grid">
+
+    {% for r in requests %}
+
+    <div class="card">
+
+        <div class="card-top">
+
+            <input type="checkbox" class="select-box" value="{{ r.id }}">
+
+            <div class="title">
+                {{ r.current_course_code }} <span class="arrow">⇄</span> {{ r.preferred_course_code }}
+            </div>
+
+            <span class="status">{{ r.status }}</span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="section">
+
+                <div class="label">CURRENT SLOT</div>
+
+                <div class="chips">
+                    <span class="chip">{{ r.current_section }}</span>
+                    <span class="chip">{{ r.current_faculty }}</span>
+                    <span class="chip">{{ r.current_time }}</span>
+                    <span class="chip">{{ r.current_days }}</span>
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <div class="label">PREFERRED SLOT</div>
+
+                <div class="chips">
+                    <span class="chip alt">{{ r.preferred_section }}</span>
+                    <span class="chip alt">{{ r.preferred_faculty }}</span>
+                    <span class="chip alt">{{ r.preferred_time }}</span>
+                    <span class="chip alt">{{ r.preferred_days }}</span>
+                </div>
+
+            </div>
+
+            <div class="section">
+
+                <div class="label">FLEXIBILITY</div>
+
+                <div class="chips">
+
+                    {% if r.any_day %}
+                        <span class="chip good">Any Day</span>
+                    {% endif %}
+
+                    {% if r.any_time %}
+                        <span class="chip good">Any Time</span>
+                    {% endif %}
+
+                    {% if r.any_faculty %}
+                        <span class="chip good">Any Faculty</span>
+                    {% endif %}
+
+                    {% if r.any_section %}
+                        <span class="chip good">Any Section</span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty">
+    <h2>No Requests Yet</h2>
+    <p>Create your first swap request to start matching 🎯</p>
+</div>
+
+{% endif %}
+
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+    <div class="modal-box">
+
+        <h2>Confirm Delete</h2>
+        <p>Are you sure you want to delete selected requests?</p>
+
+        <div class="modal-actions">
+            <button class="yes" onclick="deleteSelected()">Yes</button>
+            <button class="no" onclick="closeModal()">No</button>
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'js/my-requests.js' %}"></script>
+
+</body>
+</html>
