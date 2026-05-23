@@ -11,5 +11,7 @@ urlpatterns = [
     path('my-requests/', views.my_requests_page),
     path('matches/', views.matches_page),
     path('notifications/', views.notifications_page),
-    path('profile/', views.profile_page)
+    path('profile/', views.profile_page),
+    path("delete-multiple/", views.delete_multiple, name="delete_multiple"),
+    path("delete-request/<int:request_id>/", views.delete_request, name="delete_request"),
 ]

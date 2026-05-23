@@ -98,10 +98,10 @@
 </div>
 
 <div class="options">
-<label><input type="checkbox" name="any_time"> Any Time</label>
-<label><input type="checkbox" name="any_day"> Any Day</label>
-<label><input type="checkbox" name="any_faculty"> Any Faculty</label>
-<label><input type="checkbox" name="any_section"> Any Section</label>
+<label><input type="checkbox" id="anyTime" name="any_time"> Any Time</label>
+<label><input type="checkbox" id="anyDay" name="any_day"> Any Day</label>
+<label><input type="checkbox" id="anyFaculty" name="any_faculty"> Any Faculty</label>
+<label><input type="checkbox" id="anySection" name="any_section"> Any Section</label>
 </div>
 
 <button type="submit" class="submit-btn">Submit Request</button>
@@ -111,57 +111,7 @@
 
 </main>
 
-<script>
-
-let currentDays = [];
-
-function toggleCurrentDay(el, value){
-
-    el.classList.toggle("active");
-
-    if(currentDays.includes(value)){
-        currentDays = currentDays.filter(d => d !== value);
-    } else {
-        currentDays.push(value);
-    }
-
-    document.getElementById("currentDay").value = currentDays.join(",");
-}
-
-let preferredDays = [];
-
-function togglePreferredDay(el,value){
-
-    el.classList.toggle("active");
-
-    if(preferredDays.includes(value)){
-        preferredDays = preferredDays.filter(d => d !== value);
-    } else {
-        preferredDays.push(value);
-    }
-
-    document.getElementById("preferredDay").value = preferredDays.join(",");
-}
-
-function selectCurrentTime(el,value){
-
-    document.querySelectorAll("#currentTimeGroup .chip")
-    .forEach(c => c.classList.remove("active"));
-
-    el.classList.add("active");
-    document.getElementById("currentTime").value = value;
-}
-
-function selectPreferredTime(el,value){
-
-    document.querySelectorAll("#preferredTimeGroup .chip")
-    .forEach(c => c.classList.remove("active"));
-
-    el.classList.add("active");
-    document.getElementById("preferredTime").value = value;
-}
-
-</script>
+<script src="/static/js/create-request.js"></script>
 
 </body>
 </html>
