@@ -4,12 +4,20 @@ from .models import SlotRequest, StudentProfile
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from .models import SlotRequest, Match
+from .matching import calculate_mutual_score
+from django.db.models import Q
 # Create your views here.
 
 @login_required
 def index(request):
+    matches = Match.objects.filter(
+        Q(user_a=request.user) | Q(user_b=request.user)
+    ).order_by("-mutual_score")[:5]
+
     return render(request, "index.html" , {
-        "user": request.user
+        "user": request.user,
+        "matches" : matches
     })
 
 def register_page(request):
@@ -75,7 +83,7 @@ def create_request_page(request):
         preferred_time = "" if any_time else request.POST.get("preferredTime")
         preferred_days = "" if any_day else request.POST.get("preferredDay")
         
-        SlotRequest.objects.create(
+        new_request =SlotRequest.objects.create(
             user=request.user,
             # Current slot
             current_course_code=request.POST.get("currentCourse"),
@@ -97,6 +105,39 @@ def create_request_page(request):
             any_section=any_section,
             any_faculty=any_faculty
         )
+        all_requests = SlotRequest.objects.filter(
+          user__studentprofile__department=request.user.studentprofile.department
+)         .exclude(user=request.user)
+
+       # generate matches
+        for other in all_requests:
+
+            if request.user.studentprofile.department != other.user.studentprofile.department:
+              continue
+
+            a_to_b, b_to_a, mutual = calculate_mutual_score(new_request, other)
+
+            if a_to_b >= 60 and b_to_a >= 60:
+
+                # avoid duplicates
+                exists = Match.objects.filter(
+                    user_a=new_request.user,
+                    user_b=other.user
+                ).exists()
+
+                if not exists:
+                    Match.objects.create(
+                        user_a=new_request.user,
+                        user_b=other.user,
+
+                        request_a=new_request,
+                        request_b=other,
+
+                        score_a_to_b=a_to_b,
+                        score_b_to_a=b_to_a,
+                        mutual_score=mutual
+                    )
+
         return redirect("/my-requests/")
 
     return render(request, "create-request.html")
@@ -137,8 +178,24 @@ def delete_multiple(request):
 
     return redirect("/my-requests/")
 
-def matches_page(request):
-    return render(request, "matches.html")
+@login_required
+def matches_list_page(request):
+    matches = Match.objects.filter(
+        Q(user_a=request.user) | Q(user_b=request.user)
+    ).order_by("-mutual_score")
+
+    return render(request, "matches.html", {
+        "matches": matches
+    })
+
+@login_required
+def match_detail_page(request, match_id):
+    match = Match.objects.get(id=match_id)
+
+    return render(request, "match-details.html", {
+        "match": match
+        })
+
 def notifications_page(request):
     return render(request, "notifications.html")
 def profile_page(request):

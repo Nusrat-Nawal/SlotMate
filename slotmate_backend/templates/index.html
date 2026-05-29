@@ -50,50 +50,57 @@
     <main class="container">
 
         <section class="cards">
+           {% for m in matches %}
 
-            <div class="card card-purple">
-            <div class="card-top">
-            <h3>CSE161.2 ↔ CSE181.1</h3>
-            <span class="match-tag">87%</span>
-            </div>
-             <p>Match Score: 87%</p>
-            <div class="compatibility">
-              <div class="bar" style="width:87%" >
+        <div class="card {% cycle 'card-purple' 'card-pink' 'card-blue' 'card-orange' %}">
 
-              </div>
-            </div>
-            <button>Request Swap</button>
-             </div>
+        <div class="card-top">
+    
+                <div class="score-circle">
+                   {{ m.mutual_score|floatformat:0 }}%
+                </div>
 
-            <div class="card card-pink">
-            <div class="card-top">
-            <h3>EEE161.2 ↔ CSE161.2</h3>
-             <span class="match-tag">72%</span>
-            </div>
-            <p>Match Score: 72%</p>
-            <div class="compatibility">
-              <div class="bar" style="width: 72%;">
-                
-              </div>
-            </div>
-            <button>Request Swap</button>
-            </div>
+                <div class="match-title">
+                     {{ m.request_a.current_course_code }} ↔ {{ m.request_b.current_course_code }}
+                </div>
 
-            <div class="card card-orange">
-            <div class="card-top">
-            <h3>CSE161.2 ↔ CSE161.3</h3>
-            <span class="match-tag">91%</span>
-            </div>
-            <p>Match Score: 91%</p>
-             <div class="compatibility">
-              <div class="bar" style="width: 91%;">
-                
-              </div>
-            </div>
-            <button>Request Swap</button>
-            </div>
+        </div>
 
-    </section>
+    <div class="match-info">
+        <p>
+        Section:
+        {{ m.request_a.current_section }}
+        ↔
+        {{ m.request_b.current_section }} </p>
+
+    <p class="muted">
+        Faculty:
+        {{ m.request_a.current_faculty }} ↔ {{ m.request_b.current_faculty }}
+    </p>
+
+    <p class="muted">
+        Time:
+        {{ m.request_a.current_time }} ↔ {{ m.request_b.current_time }}
+    </p>
+    
+    </div>  
+
+    <a href="/match/{{ m.id }}/" class="view-btn">
+        View Details 
+    </a>
+
+</div>
+
+{% empty %}
+
+<div class="glass-card">
+    <h3>No matches yet</h3>
+    <p>Create a request to start matching.</p>
+</div>
+
+     {% endfor %}
+
+</section>
 
     <div class="live-feed">
      Live Match Feed
@@ -125,6 +132,8 @@
     </div>
 
     </main>
+
+    <script src="{% static 'js/index.js' %}"></script>
 
 </body>
 </html>

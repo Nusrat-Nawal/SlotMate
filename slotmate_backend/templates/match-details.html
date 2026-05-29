@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Match Detail</title>
+
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/matches.css' %}">
+</head>
+
+<body>
+
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+<div class="bg"></div>
+
+<header class="topbar">
+    <div class="brand">
+        <h2>Match Detail</h2>
+        <p>Deep Compatibility View</p>
+    </div>
+
+    <a href="/matches/" class="back-btn">← Back</a>
+</header>
+
+<main class="container">
+
+<div class="hero-card glass-card">
+    <div class="hero-text">
+        <h1>Compatibility Match Found</h1> </div>
+    
+        <div class="hero-score">
+        <div class="score-circle" style="--p: {{ match.mutual_score|floatformat:0 }}">
+            {{ match.mutual_score|floatformat:0 }}%
+        </div>
+        </div>
+
+    <div class="hero-text">
+        <p>
+            {{ match.request_a.current_course_code }}
+            ↔
+            {{ match.request_b.current_course_code }}
+        </p>
+    </div>
+
+
+<div class="persona-b">
+<div class="grid">
+
+<!-- A -->
+<div class="card side a">
+    <h3>User A</h3>
+   <div class="row">
+    <span>Course</span>
+    <b>{{ match.request_a.current_course_code }}</b>
+   </div>
+   <div class="row">
+    <span>Section</span>
+    <b>{{ match.request_a.current_section }}</b>
+   </div>
+   <div class="row">
+    <span>Faculty</span>
+    <b>{{ match.request_a.current_faculty }}</b>
+   </div>
+   <div class="row">
+    <span>Time</span>
+    <b>{{ match.request_a.current_time }}</b>
+   </div>
+   <div class="row">
+    <span>Days</span>
+    <b>{{ match.request_a.current_days }}</b>
+   </div>
+</div>
+
+<!-- B -->
+<div class="card side b">
+    <h3>User B</h3>
+    <div class="row">
+        <span>Course</span>
+        <b>{{ match.request_b.current_course_code }}</b>
+    </div>
+    <div class="row">
+        <span>Section</span>
+        <b>{{ match.request_b.current_section }}</b>
+    </div>
+    <div class="row">
+        <span>Faculty</span>
+        <b>{{ match.request_b.current_faculty }}</b>
+    </div>
+    <div class="row">
+        <span>Time</span>
+        <b>{{ match.request_b.current_time }}</b>
+    </div>
+    <div class="row">
+        <span>Days</span>
+        <b>{{ match.request_b.current_days }}</b>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Info Reveal button-->
+<div class="reveal-section glass-card">
+
+    <h3>Want to reveal identity?</h3>
+
+    <a href="#" class="reveal-btn">
+        Reveal Request
+    </a>
+    <p>Both users must agree before personal details are shown.</p>
+
+</div>
+
+</div>
+
+</main>
+
+</body>
+</html>
