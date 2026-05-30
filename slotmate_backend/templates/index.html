@@ -7,6 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -20,17 +21,26 @@
         <div class="logo">SlotMate</div>
         <div class="slogan">Better Slots, Better Semester</div>
        </div>
+       
         <div class="nav-links">
-            <a href="/index/">🏠︎ Home</a>
-            <a href="/create-request/">+ Create Request</a> 
-            <a href="/my-requests/">🗐 My Requests</a>
-            <a href="/matches/">♡ Matches</a>
-            <a href="/notifications/">🕭 Notifications</a>
-            <a href="/profile/">👤 Profile</a> 
+            <a href="/index/">Home</a>
+            <a href="/create-request/">Create Request</a> 
+            <a href="/matches/">Matches</a>
+            <a href="/notifications/">Notifications</a>
+            
+            <div class="profile-dropdown">
+                <button class="profile-btn"> Profile ▼
+                </button>
+                    <div class="dropdown-menu">
+                        <a href="/profile/">My Profile</a>
+                        <a href="/my-requests/">My Requests</a>
+                        <a href="#" >Logout</a>
+                    </div>
+            </div>
         </div>
     </header>
 
-    <section class="top-info glass-card">
+    <section class="top-info">
 
        <div class="info-item">
             Hello, {{ user.first_name }} {{ user.last_name }}

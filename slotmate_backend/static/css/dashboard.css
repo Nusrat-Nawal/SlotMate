@@ -3,17 +3,23 @@
 }
 
 .top-info{
-    margin:20px 40px;
-
+    margin:15px 40px;
     display:flex;
     justify-content:space-between;
     align-items:center;
+    padding:14px 20px;
+    gap:20px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:12px;
 
-    padding:20px 30px;
 }
 
 .info-item{
-    opacity:0.9;
+    font-size: 25px;
+    font-weight: 600;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    opacity: 0.9;
 }
 
 .bottom-sections{
@@ -67,7 +73,7 @@
   padding: 20px;
   background: rgba(255,255,255,0.08);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 15px;
+  border-radius: 12px;
   transition: 0.3s;
   position:relative;
   overflow:hidden;
@@ -236,4 +242,61 @@ button:hover{
 .view-btn:hover{
     transform:translateY(-2px) scale(1.03);
     box-shadow:0 0 18px rgba(236,72,153,0.4);
+}
+
+.profile-btn{
+    all: unset;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    height: 48px;
+    min-width: 130px;
+
+    background: rgba(224, 100, 224, 0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+
+    cursor:pointer;
+}
+
+.profile-dropdown{
+    position:relative;
+}
+
+.profile-btn:hover{
+    border-bottom:2px solid #A855F7;
+}
+
+.dropdown-menu{
+    display:none;
+    position:absolute;
+    top:100%;
+    right:0;
+    min-width:170px;
+    overflow:hidden;
+    background:rgba(15,15,30,0.98);
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.dropdown-menu a{
+    display:block;
+    padding: 12px 14px;
+    font-size:18px;
+    color:white;
+    text-decoration:none;
+    border-radius:0;
+}
+
+.dropdown-menu a:hover{
+    background:rgba(168,85,247,0.2);
+}
+
+.profile-dropdown:hover .dropdown-menu{
+    display:block;
 }
