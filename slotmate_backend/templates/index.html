@@ -7,6 +7,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -20,17 +21,26 @@
         <div class="logo">SlotMate</div>
         <div class="slogan">Better Slots, Better Semester</div>
        </div>
+       
         <div class="nav-links">
-            <a href="/index/">🏠︎ Home</a>
-            <a href="/create-request/">+ Create Request</a> 
-            <a href="/my-requests/">🗐 My Requests</a>
-            <a href="/matches/">♡ Matches</a>
-            <a href="/notifications/">🕭 Notifications</a>
-            <a href="/profile/">👤 Profile</a> 
+            <a href="/index/">Home</a>
+            <a href="/create-request/">Create Request</a> 
+            <a href="/matches/">Matches</a>
+            <a href="/notifications/">Notifications</a>
+            
+            <div class="profile-dropdown">
+                <button class="profile-btn"> Profile ▼
+                </button>
+                    <div class="dropdown-menu">
+                        <a href="/profile/">My Profile</a>
+                        <a href="/my-requests/">My Requests</a>
+                        <a href="#" >Logout</a>
+                    </div>
+            </div>
         </div>
     </header>
 
-    <section class="top-info glass-card">
+    <section class="top-info">
 
        <div class="info-item">
             Hello, {{ user.first_name }} {{ user.last_name }}
@@ -50,50 +60,57 @@
     <main class="container">
 
         <section class="cards">
+           {% for m in matches %}
 
-            <div class="card card-purple">
-            <div class="card-top">
-            <h3>CSE161.2 ↔ CSE181.1</h3>
-            <span class="match-tag">87%</span>
-            </div>
-             <p>Match Score: 87%</p>
-            <div class="compatibility">
-              <div class="bar" style="width:87%" >
+        <div class="card {% cycle 'card-purple' 'card-pink' 'card-blue' 'card-orange' %}">
 
-              </div>
-            </div>
-            <button>Request Swap</button>
-             </div>
+        <div class="card-top">
+    
+                <div class="score-circle">
+                   {{ m.mutual_score|floatformat:0 }}%
+                </div>
 
-            <div class="card card-pink">
-            <div class="card-top">
-            <h3>EEE161.2 ↔ CSE161.2</h3>
-             <span class="match-tag">72%</span>
-            </div>
-            <p>Match Score: 72%</p>
-            <div class="compatibility">
-              <div class="bar" style="width: 72%;">
-                
-              </div>
-            </div>
-            <button>Request Swap</button>
-            </div>
+                <div class="match-title">
+                     {{ m.request_a.current_course_code }} ↔ {{ m.request_b.current_course_code }}
+                </div>
 
-            <div class="card card-orange">
-            <div class="card-top">
-            <h3>CSE161.2 ↔ CSE161.3</h3>
-            <span class="match-tag">91%</span>
-            </div>
-            <p>Match Score: 91%</p>
-             <div class="compatibility">
-              <div class="bar" style="width: 91%;">
-                
-              </div>
-            </div>
-            <button>Request Swap</button>
-            </div>
+        </div>
 
-    </section>
+    <div class="match-info">
+        <p>
+        Section:
+        {{ m.request_a.current_section }}
+        ↔
+        {{ m.request_b.current_section }} </p>
+
+    <p class="muted">
+        Faculty:
+        {{ m.request_a.current_faculty }} ↔ {{ m.request_b.current_faculty }}
+    </p>
+
+    <p class="muted">
+        Time:
+        {{ m.request_a.current_time }} ↔ {{ m.request_b.current_time }}
+    </p>
+    
+    </div>  
+
+    <a href="/match/{{ m.id }}/" class="view-btn">
+        View Details 
+    </a>
+
+</div>
+
+{% empty %}
+
+<div class="glass-card">
+    <h3>No matches yet</h3>
+    <p>Create a request to start matching.</p>
+</div>
+
+     {% endfor %}
+
+</section>
 
     <div class="live-feed">
      Live Match Feed
@@ -125,6 +142,8 @@
     </div>
 
     </main>
+
+    <script src="{% static 'js/index.js' %}"></script>
 
 </body>
 </html>

@@ -1,4 +1,70 @@
-<h2>My Matches</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>All Matches</title>
 
-<div class="glass-card">Match 1</div>
-<div class="glass-card">Match 2</div>
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/matches.css' %}">
+</head>
+
+<body>
+
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+<div class="bg"></div>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="logo">SlotMate</div>
+        <div class="slogan">All Matches</div>
+    </div>
+
+    <a href="/index/" class="back-btn">← Back to Feed</a>
+</header>
+
+<main class="container">
+
+{% for m in matches %}
+
+<div class="card">
+    
+    <div class="rank-badge">#{{ forloop.counter }}</div>
+
+    <div class="card-top">
+        <h3>
+            {{ m.request_a.current_course_code }}
+            ↔
+            {{ m.request_b.current_course_code }}
+        </h3>
+
+        <span class="status">
+            {{ m.mutual_score|floatformat:0 }}%
+        </span>
+    </div>
+
+    <p>
+        Section:
+        {{ m.request_a.current_section }} ↔ {{ m.request_b.current_section }}
+    </p>
+
+    <p>
+        Faculty:
+        {{ m.request_a.current_faculty }} ↔ {{ m.request_b.current_faculty }}
+    </p>
+
+    <a href="/match/{{ m.id }}/" class="view-btn">
+        View Full Match
+    </a>
+
+</div>
+
+{% empty %}
+    <div class="empty">No matches found</div>
+{% endfor %}
+
+</main>
+
+</body>
+</html>

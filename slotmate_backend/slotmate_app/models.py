@@ -32,4 +32,18 @@ class SlotRequest(models.Model):
     status = models.CharField(max_length=20, default="Pending")  
     created_at = models.DateTimeField(auto_now_add=True)
     
-    
+class Match(models.Model):
+    user_a = models.ForeignKey(User, on_delete=models.CASCADE, related_name="matches_as_a")
+    user_b = models.ForeignKey(User, on_delete=models.CASCADE, related_name="matches_as_b")
+
+    request_a = models.ForeignKey(SlotRequest, on_delete=models.CASCADE, related_name="request_a")
+    request_b = models.ForeignKey(SlotRequest, on_delete=models.CASCADE, related_name="request_b")
+
+    score_a_to_b = models.FloatField()
+    score_b_to_a = models.FloatField()
+    mutual_score = models.FloatField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user_a", "user_b")   
