@@ -11,17 +11,17 @@ class StudentProfile(models.Model):
 class SlotRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     #Current Slots
-    current_course_code = models.CharField(max_length=20)
-    current_section = models.CharField(max_length=10)
-    current_faculty = models.CharField(max_length=10)
-    current_time = models.CharField(max_length=50)
-    current_days = models.CharField(max_length=100)
+    current_course_code = models.CharField(max_length=20,blank=False,null=False)
+    current_section = models.CharField(max_length=10 ,blank=False,null=False)
+    current_faculty = models.CharField(max_length=10,blank=False,null=False)
+    current_time = models.CharField(max_length=50,blank=False,null=False)
+    current_days = models.CharField(max_length=100,blank=False,null=False)
     #Preferred Slots
-    preferred_course_code = models.CharField(max_length=20)
-    preferred_section = models.CharField(max_length=10)
-    preferred_faculty = models.CharField(max_length=10)
-    preferred_time = models.CharField(max_length=50)
-    preferred_days = models.CharField(max_length=100)
+    preferred_course_code = models.CharField(max_length=20,blank=False,null=False)
+    preferred_section = models.CharField(max_length=10,null=True, blank=True)
+    preferred_faculty = models.CharField(max_length=10,null=True, blank=True)
+    preferred_time = models.CharField(max_length=50,null=True, blank=True)
+    preferred_days = models.CharField(max_length=100,null=True, blank=True)
 
     #For Any Options
     any_day = models.BooleanField(default=False)

@@ -13,7 +13,7 @@ from django.db.models import Q
 def index(request):
     matches = Match.objects.filter(
         Q(user_a=request.user) | Q(user_b=request.user)
-    ).order_by("-mutual_score")[:5]
+    ).order_by("-mutual_score")[:4]
 
     return render(request, "index.html" , {
         "user": request.user,
@@ -73,16 +73,36 @@ def create_request_page(request):
     any_faculty = False
 
     if request.method == "POST":
+
+        if not request.POST.get("currentCourse") or not request.POST.get("currentSection"):
+            return render(request, "create-request.html", {
+                "error": "Current Course and Section are required!"
+            })
+        if not request.POST.get("preferredCourse"):
+            return render(request, "create-request.html", {
+                "error": "Preferred Course is required!"
+            })       
+        #To check duplicates
+        exists = SlotRequest.objects.filter(
+        user=request.user,
+        current_course_code=request.POST.get("currentCourse"),
+        current_section=request.POST.get("currentSection")
+        ).exists()
+        if exists:
+         return render(request, "create-request.html", {
+        "error": "You already have a request for this current course + section. Delete old one first."
+         })
+        
         any_day = request.POST.get("any_day") == "on"
         any_time = request.POST.get("any_time") == "on"
         any_section = request.POST.get("any_section") == "on"
         any_faculty = request.POST.get("any_faculty") == "on"
 
-        preferred_faculty = "" if any_faculty else request.POST.get("preferredFaculty")
-        preferred_section = "" if any_section else request.POST.get("preferredSection")
-        preferred_time = "" if any_time else request.POST.get("preferredTime")
-        preferred_days = "" if any_day else request.POST.get("preferredDay")
-        
+        preferred_faculty = request.POST.get("preferredFaculty") or None
+        preferred_section = request.POST.get("preferredSection") or None
+        preferred_time = request.POST.get("preferredTime") or None
+        preferred_days = request.POST.get("preferredDay") or None
+
         new_request =SlotRequest.objects.create(
             user=request.user,
             # Current slot
@@ -106,14 +126,12 @@ def create_request_page(request):
             any_faculty=any_faculty
         )
         all_requests = SlotRequest.objects.filter(
+          user__studentprofile__university=request.user.studentprofile.university,
           user__studentprofile__department=request.user.studentprofile.department
 )         .exclude(user=request.user)
 
        # generate matches
         for other in all_requests:
-
-            if request.user.studentprofile.department != other.user.studentprofile.department:
-              continue
 
             a_to_b, b_to_a, mutual = calculate_mutual_score(new_request, other)
 
@@ -121,8 +139,8 @@ def create_request_page(request):
 
                 # avoid duplicates
                 exists = Match.objects.filter(
-                    user_a=new_request.user,
-                    user_b=other.user
+                   Q(user_a=new_request.user, user_b=other.user) |
+                   Q(user_a=other.user, user_b=new_request.user) 
                 ).exists()
 
                 if not exists:

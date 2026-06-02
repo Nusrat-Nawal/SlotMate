@@ -15,8 +15,12 @@
 <div class="bg"></div>
 
 <header class="navbar">
+  <div class="brand">
     <div class="logo">SlotMate</div>
     <div class="slogan">Better Slots, Better Semester</div>
+    </div>
+
+    <a href="/index/" class="back-btn">← Back To Home</a>
 </header>
 
 <main class="container">
@@ -30,12 +34,12 @@
 <div class="section">
 <h3>Current Course Info</h3>
 
-<input type="text" name="currentCourse" placeholder="Course Code (e.g. CSE472)">
-<input type="text" name="currentSection" placeholder="Section (e.g. 1)">
-<input type="text" name="currentFaculty" placeholder="Faculty Initial (e.g. ANMS)">
+<input type="text" name="currentCourse" placeholder="Course Code (e.g. CSE472)" required>
+<input type="text" name="currentSection" placeholder="Section (e.g. 1)" required>
+<input type="text" name="currentFaculty" placeholder="Faculty Initial (e.g. ANMS)" required>
 
-<input type="hidden" id="currentDay" name="currentDay">
-<input type="hidden" id="currentTime" name="currentTime">
+<input type="hidden" id="currentDay" name="currentDay" required>
+<input type="hidden" id="currentTime" name="currentTime" required>
 
 <h3>Current Day</h3>
 
@@ -65,9 +69,9 @@
 <div class="section">
 <h3>Preferred Course Info</h3>
 
-<input type="text" name="preferredCourse" placeholder="Preferred Course (CSE361)">
-<input type="text" name="preferredSection" placeholder="Preferred Section (e.g. 2)">
-<input type="text" name="preferredFaculty" placeholder="Preferred Faculty Initial (e.g. NON)">
+<input type="text" id="preferredCourse" name="preferredCourse" placeholder="Preferred Course (CSE361)" required>
+<input type="text" id="preferredSection" name="preferredSection" placeholder="Preferred Section (e.g. 2)">
+<input type="text" id="preferredFaculty" name="preferredFaculty" placeholder="Preferred Faculty Initial (e.g. NON)">
 
 <input type="hidden" id="preferredDay" name="preferredDay">
 <input type="hidden" id="preferredTime" name="preferredTime">
@@ -111,7 +115,39 @@
 
 </main>
 
-<script src="/static/js/create-request.js"></script>
+<div id="policyPopup" class="popup-overlay hidden">
+    <div class="popup-box">
+
+        <h2>Swap Request Guidelines & System Policy</h2>
+
+        <p>
+            Please read and understand the following rules before creating a swap request.
+            This ensures accurate matching and prevents duplicate or invalid entries.
+        </p>
+
+        <ul>
+            <li><b>Unique Request Rule:</b> You cannot create multiple requests with the same <b>Current Course + Section</b>. You must delete the previous request before creating a new one.</li>
+
+            <li><b>Preference Override Rule:</b> Selecting <b>“Any”</b> will override specific preferences (Time, Day, Section, Faculty).</li>
+
+            <li><b>Data Accuracy:</b> Incorrect or incomplete data may reduce match accuracy or block matching results.</li>
+
+            <li><b>System Behavior:</b> Matching is based on mutual compatibility between users in the same department & university.</li>
+        </ul>
+
+        <label class="popup-check">
+            <input type="checkbox" id="dontShowAgain">
+            Don't show this again
+        </label>
+
+        <button type="button" id="acceptBtn" class="popup-btn">
+            I Understand
+        </button>
+
+    </div>
+</div>
+
+<script src="{% static 'js/create-request.js' %}"></script>
 
 </body>
 </html>

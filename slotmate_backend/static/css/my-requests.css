@@ -198,3 +198,22 @@
     color: white;
     cursor: pointer;
 }
+@media (max-width: 600px){
+  .container{
+    padding: 15px;
+  }
+
+  .topbar{
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
+  }
+
+  .card{
+    padding: 14px;
+  }
+}
