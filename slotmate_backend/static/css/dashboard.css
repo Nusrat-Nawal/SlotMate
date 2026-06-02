@@ -61,7 +61,7 @@
 
 .cards {
   display: flex;
-  gap: 20px;
+  gap: 40px;
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 30px;
@@ -299,4 +299,34 @@ button:hover{
 
 .profile-dropdown:hover .dropdown-menu{
     display:block;
+}
+
+@media (max-width: 600px){
+  .container{
+    padding: 15px;
+  }
+
+  .top-info{
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px;
+  }
+
+  .info-item{
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .bottom-sections{
+    grid-template-columns: 1fr;
+  }
+
+  .cards{
+    gap: 20px;
+  }
+
+  .card{
+    width: 100%;
+    min-height: auto;
+  }
 }
