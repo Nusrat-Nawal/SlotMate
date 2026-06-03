@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{% static 'css/matches.css' %}">
 </head>
 
-<body>
+<body class="matches-page">
 
 <div class="bg-glow glow1"></div>
 <div class="bg-glow glow2"></div>
@@ -20,13 +20,19 @@
         <div class="logo">SlotMate</div>
         <div class="slogan">All Matches</div>
     </div>
-
-    <a href="/index/" class="back-btn">← Back to Feed</a>
+    <div class="expiry-banner">
+    ⏳ Matches are automatically removed after 30 days!
+    </div>
+    <a href="/index/" class="back-btn"> Back to Feed</a>
 </header>
 
 <main class="container">
 
-{% for m in matches %}
+{% if matches %} 
+
+<div class="grid">
+
+    {% for m in matches %}
 
 <div class="card">
     
@@ -38,8 +44,9 @@
             ↔
             {{ m.request_b.current_course_code }}
         </h3>
-
-        <span class="status">
+    </div>
+    <div class="card-meta">
+        <span class="status {% if m.mutual_score >= 84 %}high{% elif m.mutual_score >= 69 %}medium{% else %}low{% endif %}">
             {{ m.mutual_score|floatformat:0 }}%
         </span>
     </div>
@@ -60,9 +67,13 @@
 
 </div>
 
-{% empty %}
-    <div class="empty">No matches found</div>
 {% endfor %}
+
+</div>
+
+{% else %}
+    <div class="empty">No matches found</div>
+{% endif %}
 
 </main>
 
