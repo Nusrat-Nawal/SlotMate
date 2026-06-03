@@ -121,27 +121,148 @@
         <section class="snapshot">
             <div class="glass-card">
                 <h2>Your Swap Snapshot</h2>
-                <div class="snapshot-circle">
-                    92%
+
+                <div class="snapshot-grid">
+
+                    <div class="mini-card">
+                        <div class="mini-icon"></div>
+                        <div class="mini-title">Active Requests</div> <br>
+                        <div class="mini-value">{{ active_requests|default:"2" }}</div> <br>
+                        <a class="mini-link" href="/my-requests/">View All</a>
+                    </div>
+                    
+                    <div class="circle-card">
+                      <div class="circle">
+                        <div class="circle-inner">
+                          💜 <br>
+                          <br>
+                          <small>Total Matches</small> <br>
+                        <b>{{ matches|length }}</b>
+                        </div>
+                    </div>
+                         <a class="mini-link" href="/matches/">View All</a>
+
+                    </div>
+
+                    <div class="mini-card">
+                        <div class="mini-icon"></div>
+                        <div class="mini-title">Successful</div> <br>
+                        <div class="mini-value">{{ successful_matches }}</div> <br>
+                        <a class="mini-link" href="/matches/">View All</a>
+                    </div>
+
                 </div>
-                <p>Visual match overview</p>
+                <br>
+                <br>
+
+                <p class="quote-box">“ The right match can <br>change your whole semester " ✨</p>
+
             </div>
         </section>    
 
         <section class="insight">
-            <div class="glass-card">
-                <h2>Graphical Match Insight</h2>
-                <p>Compatibility analysis</p>
+                <div class="glass-card insight-card">
+
+                <h2>📊 Graphical Match Insight</h2>
+                <p class="sub-text">See how your preferences are matching!</p>
+                <br>
+
+                <div class="radar-wrapper">
+                    <canvas id="matchRadar"></canvas>
+                </div>
+
+                <button class="cta-btn">
+                    <a href="/match/{{ matches.0.id }}/" class="cta-link">View Top Match Details</a>
+                </button>
             </div>
+
         </section>
 
     </section>
 
     <div class="quick-tip glass-card">
-    ~ Be specific with time preferences to get better matches! ~
+    Quick Tip: Be specific with time preferences to get better matches! 
     </div>
 
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('matchRadar').getContext('2d');
+
+new Chart(ctx, {
+    type: 'radar',
+    data: {
+        labels: [
+            'Course',
+            'Section',
+            'Faculty',
+            'Time',
+            'Day',
+        ],
+        datasets: [{
+            label: 'Match Strength',
+            data: [
+                Number("{{ insight.course|default:'0' }}"),
+                Number("{{ insight.section|default:'0' }}"),
+                Number("{{ insight.faculty|default:'0' }}"),
+                Number("{{ insight.time|default:'0' }}"),
+                Number("{{ insight.day|default:'0' }}"),
+            ],
+            backgroundColor: 'rgba(168,85,247,0.25)',
+            borderColor: '#A855F7',
+            pointBackgroundColor: '#EC4899',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+
+        scales: {
+            r: {
+
+                Min: 0,
+                Max: 100,
+
+                ticks:{
+                    display: false
+                },
+
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+
+                angleLines: {
+                    color: 'rgba(255, 255, 255, 0.15)'
+                },
+
+                pointLabels: {
+                        color: '#fff',
+                        font: {
+                            size: 13
+                        }
+                    }
+                }
+            }
+        },
+    
+        plugins: {
+           legend: {
+             display: false
+        }
+    }
+});
+
+</script>
+
+    <script>
+        document.querySelectorAll('.bar-fill').forEach(function(el) {
+            var width = parseFloat(el.dataset.width) || 0;
+            el.style.width = width + '%';
+        });
+    </script>
 
     <script src="{% static 'js/index.js' %}"></script>
 

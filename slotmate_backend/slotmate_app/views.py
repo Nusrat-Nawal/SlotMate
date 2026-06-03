@@ -1,3 +1,4 @@
+from multiprocessing import context
 from django.contrib.auth.models import User
 from django.shortcuts import render , redirect
 from .models import SlotRequest, StudentProfile
@@ -11,14 +12,99 @@ from django.db.models import Q
 
 @login_required
 def index(request):
-    matches = Match.objects.filter(
+    all_matches = Match.objects.filter(
         Q(user_a=request.user) | Q(user_b=request.user)
-    ).order_by("-mutual_score")[:4]
+    )
+    top_matches = all_matches.order_by("-mutual_score")[:4]
+    total_matches = all_matches.count()
 
-    return render(request, "index.html" , {
+    successful_matches = all_matches.count()
+    active_requests = SlotRequest.objects.filter(user=request.user).count()
+
+    success_rate = (
+        (successful_matches / total_matches) * 100
+        if total_matches > 0 else 0
+    )
+    insight = calculate_insight(request.user)
+
+    context = {
         "user": request.user,
-        "matches" : matches
-    })
+        "matches": top_matches,
+        "active_requests": active_requests,
+        "successful_matches": successful_matches,
+        "overall_match": round(success_rate, 1),
+        "insight": insight,
+        "reveal_system_ready": True,
+    }
+
+    return render( request, "index.html" , context)
+
+def calculate_insight(user):
+    requests = SlotRequest.objects.filter(user=user)
+
+    if not requests.exists():
+        return {
+            "course": 0,
+            "section": 0,
+            "faculty": 0,
+            "time": 0,
+            "day": 0
+        }
+    matches =Match.objects.filter(
+        Q(request_a__in=requests) | Q(request_b__in=requests)
+    )
+    total =matches.count()
+
+    if total == 0:
+        return {
+            "course": 0,
+            "section": 0,
+            "faculty": 0,
+            "time": 0,
+            "day": 0
+        }
+    matches =Match.objects.filter(
+        Q(request_a__in=requests) | Q(request_b__in=requests)
+    )
+    total =matches.count()
+
+    if total == 0:
+        return {
+            "course": 0,
+            "section": 0,
+            "faculty": 0,
+            "time": 0,
+            "day": 0
+        }
+
+    same_course = 0
+    same_section = 0
+    same_faculty = 0
+    time_match = 0
+    day_match = 0
+
+    for m in matches:
+        if m.request_a.current_course_code == m.request_b.current_course_code:
+            same_course += 1
+
+        if m.request_a.current_section == m.request_b.current_section:
+            same_section += 1
+
+        if m.request_a.current_faculty == m.request_b.current_faculty:
+            same_faculty += 1
+
+        if m.request_a.current_time == m.request_b.current_time:
+            time_match += 1
+        if m.request_a.current_days == m.request_b.current_days:    
+            day_match += 1
+
+    return {
+        "course": round((same_course / total) * 100, 1),
+        "section": round((same_section / total) * 100, 1),
+        "faculty": round((same_faculty / total) * 100, 1),
+        "time": round((time_match / total) * 100, 1),
+        "day": round((day_match / total) * 100, 1),
+    }
 
 def register_page(request):
     if request.method == "POST":

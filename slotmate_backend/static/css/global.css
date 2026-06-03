@@ -132,7 +132,7 @@ body {
     justify-content:center;
     align-items:center;
 
-    height: 48px;
+    height: 45px;
     min-width: 130px;
 
     padding: 0 16px;
@@ -147,7 +147,7 @@ body {
     color: white;
 
     background: rgba(224, 100, 224, 0.06);
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(87, 85, 215, 0.542);
 
     transition: 0.2s ease;
 }
@@ -156,8 +156,39 @@ body {
     text-decoration: none;
     padding: 8px 14px;
     border-radius: 10px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(151, 124, 227, 0.08);
+    border: 1px solid rgba(87, 85, 215, 0.882);
+    margin-left:10px;
+    margin-right:10px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    backdrop-filter: blur(12px);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
 }
+.back-btn:hover{
+    transform: translateY(-2px);
+    background: rgba(168,85,247,0.15);
+    border-color: rgba(168,85,247,0.4);
+    box-shadow: 0 10px 25px rgba(168,85,247,0.25);
+}
+.expiry-banner{
+    margin: 15px 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 15px;
+    opacity: 0.9;
+    text-align: center;
+    justify-content: center;
+}
+.status.high { color: #6cee75 !important; }
+.status.medium { color: #f59e0b !important; }
+.status.low { color: #22c5c2 !important; }
 
 @media (max-width: 600px){
   .container{
@@ -168,6 +199,15 @@ body {
     font-size: 90%;
   }
 
+  p{
+    font-size: 14px;
+  }
+.topbar, .page-header{
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   input, button{
     font-size: 14px;
   }
@@ -175,4 +215,34 @@ body {
   .btn, .submit-btn{
     width: 100%;
   }
+  .navbar{
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .nav-links{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-links a{
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .logo{
+    font-size: 24px;
+  }
+
+  .slogan{
+    font-size: 12px;
+    margin-left: 0;
+  }
+  
 }

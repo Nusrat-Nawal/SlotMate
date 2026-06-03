@@ -2,6 +2,17 @@
 .container {
     padding: 40px;
 }
+.match-details-page .grid {    
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 22px;
+}
+.matches-page .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 340px));
+    gap: 40px;
+    justify-content: left;
+}
 
 /* Top Bar */
 .topbar {
@@ -51,6 +62,7 @@
 
 /* Card */
 .card {
+    position:relative;
     padding: 20px;
     border-radius: 18px;
     background: rgba(255,255,255,0.07);
@@ -58,11 +70,54 @@
     position: relative;
     margin-bottom: 20px;
 }
-.persona-b .card{
+.match-details-page .persona-b .card{
     flex:none;
     width:380px;
 }
+.matches-page .persona-b .card{
+    max-width: 320px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+    min-height: 180px;
+}
+.matches-page .card p {
+    margin: 8px 0;
+    font-size: 14px;
+    backdrop-filter: blur(12px);
+    transition: 0.3s;
+}
+.matches-page .card:hover {
+    transform: translateY(-4px);
+}
 
+.card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.card-top h3 {
+    margin: 0;
+    line-height: 1.4;
+}
+.matches-page .card-meta{
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+.matches-page .status{
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    background: rgba(139, 92, 246, 0.15);
+    color: rgb(255, 122, 188);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+}
 .breakdown {
     margin-top: 30px;
     padding: 25px;
