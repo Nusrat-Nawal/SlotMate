@@ -6,19 +6,19 @@ def calculate_score(req1, req2):
         score += 35
 
     # SECTION (20)
-    if req2.any_section or req2.preferred_section:
+    if req2.any_section:
         score += 16
     elif req1.current_section == req2.preferred_section:
         score += 20
 
     # TIME (15)
-    if req2.any_time or req2.preferred_time:
+    if req2.any_time:
         score += 12
     elif req1.current_time == req2.preferred_time:
         score += 15
 
     # DAY (15)
-    if req2.any_day or req2.preferred_days:
+    if req2.any_day:
         score += 12
     else:
         days1 = set((req1.current_days or "").split(","))
@@ -34,7 +34,7 @@ def calculate_score(req1, req2):
             score += 12
 
     # FACULTY (15)
-    if req2.any_faculty or req2.preferred_faculty:
+    if req2.any_faculty:
         score += 12
     elif req1.current_faculty == req2.preferred_faculty:
         score += 15

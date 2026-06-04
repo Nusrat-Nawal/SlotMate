@@ -201,6 +201,22 @@
     color: white;
     cursor: pointer;
 }
+.filter-banner {
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    padding: 8px 16px;
+    margin-bottom: 16px;
+    background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.2);
+    border-radius: 8px;
+}
+
+.filter-banner a {
+    color: #A855F7;
+    text-decoration: none;
+    margin-left: 8px;
+}
+
 @media (max-width: 600px){
   .container{
     padding: 15px;

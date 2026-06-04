@@ -28,6 +28,12 @@
 
 </header>
 <div class="container">
+    {% if request.GET.status %}
+    <div class="filter-banner">
+    Showing: {{ request.GET.status }} requests &nbsp;
+    <a href="/my-requests/">Show All</a>
+    </div>
+{% endif %}
 
 {% if requests %}
 

@@ -26,8 +26,13 @@
             <a href="/index/">Home</a>
             <a href="/create-request/">Create Request</a> 
             <a href="/matches/">Matches</a>
-            <a href="/notifications/">Notifications</a>
-            
+            <a href="/notifications/" class="notif-link">
+                Notifications
+                {% if unread_notifications > 0 %}
+                    <span class="notif-badge">{{ unread_notifications }}</span>
+                {% endif %}
+            </a>
+
             <div class="profile-dropdown">
                 <button class="profile-btn"> Profile ▼
                 </button>
@@ -103,7 +108,7 @@
 
 {% empty %}
 
-<div class="glass-card">
+<div class="glass-card sample">
     <h3>No matches yet</h3>
     <p>Create a request to start matching.</p>
 </div>
@@ -127,8 +132,8 @@
                     <div class="mini-card">
                         <div class="mini-icon"></div>
                         <div class="mini-title">Active Requests</div> <br>
-                        <div class="mini-value">{{ active_requests|default:"2" }}</div> <br>
-                        <a class="mini-link" href="/my-requests/">View All</a>
+                        <div class="mini-value">{{ active_requests }}</div> <br>
+                        <a class="mini-link" href="/my-requests/?status=Pending">View All</a>
                     </div>
                     
                     <div class="circle-card">
@@ -137,7 +142,7 @@
                           💜 <br>
                           <br>
                           <small>Total Matches</small> <br>
-                        <b>{{ matches|length }}</b>
+                        <b>{{ total_matches }}</b>
                         </div>
                     </div>
                          <a class="mini-link" href="/matches/">View All</a>
@@ -223,8 +228,8 @@ new Chart(ctx, {
         scales: {
             r: {
 
-                Min: 0,
-                Max: 100,
+                min: 0,
+                max: 100,
 
                 ticks:{
                     display: false
