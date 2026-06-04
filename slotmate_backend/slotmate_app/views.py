@@ -393,6 +393,7 @@ def match_detail_page(request, match_id):
         "my_reveal": my_reveal,
         "other_reveal": other_reveal,
     })
+
 @login_required
 def profile_page(request):
     user = request.user
@@ -403,6 +404,7 @@ def profile_page(request):
         "total_matches": Match.objects.filter(Q(user_a=user) | Q(user_b=user)).count(),
         "active_requests": SlotRequest.objects.filter(user=user, status="Pending").count(),
     })
+
 @login_required
 def update_profile(request):
     if request.method == "POST":

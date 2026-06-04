@@ -27,6 +27,7 @@
 
 <main class="container">
 
+ <div class="same">
     <div class="profile-hero glass-card">
         <div class="avatar-wrap">
             <div class="avatar">
@@ -43,10 +44,12 @@
             <p class="email-label">{{ user.email }}</p>
         </div>
     </div>
+    </div>
+
      <div class="stats-row">
         <div class="stat-card glass-card">
             <div class="stat-num">{{ total_requests }}</div>
-            <div class="stat-label">Swap Requests</div>
+            <div class="stat-label">Total Swap Requests</div>
         </div>
         <div class="stat-card glass-card">
             <div class="stat-num">{{ total_matches }}</div>
@@ -57,17 +60,16 @@
             <div class="stat-label">Active Requests</div>
         </div>
     </div>
-    <div class="action-buttons">
+    
+ <div class="tabs">
+    <div class="tab active" onclick="showTab('details', this)">Account Details</div>
+    <div class="tab" onclick="showTab('edit', this)">Edit Profile</div>
+    <div class="tab" onclick="showTab('password', this)">Change Password</div>
+</div> 
 
-            <button type="button" class="btn-edit" onclick="toggleEdit()"> Edit Profile </button>
+    <div class="details-grid glass-card">
 
-            <button type="button" class="btn-edit" onclick="togglePassword()">Change Password </button>
-
-        </div> 
-
-    <div class="details-grid">
-
-        <div class="detail-card glass-card" id="viewMode">
+        <div class="detail-card tab-panel show" id="tab-details">
             <h2 class="section-title">Account Details</h2>
 
             <div class="detail-row">
@@ -92,7 +94,7 @@
             </div>
         </div> 
 
-        <div class="detail-card glass-card hidden" id="editMode">
+        <div class="detail-card tab-panel" id="tab-edit">
             <h2 class="section-title">Edit Profile</h2>
             <form method="POST" action="/profile/update/">
                 {% csrf_token %}
@@ -128,11 +130,11 @@
 
                 <div class="edit-actions">
                     <button type="submit" class="btn-save">Save Changes</button>
-                    <button type="button" class="btn-cancel" onclick="toggleEdit()">Cancel</button>
+                    <button type="button" class="btn-cancel" onclick="showTabByName('details')">Cancel</button>
                 </div>
             </form>
         </div>
-        <div class="detail-card glass-card hidden" id="passwordMode">
+        <div class="detail-card tab-panel" id="tab-password">
     <h2 class="section-title">Change Password</h2>
 
     <form method="POST" action="/profile/change-password/">
@@ -162,7 +164,7 @@
     {% endif %}
 
         <button type="submit" class="btn-save"> Update Password </button>
-        <button type="button" class="btn-cancel" onclick="togglePassword()">Cancel</button>
+        <button type="button" class="btn-cancel" onclick="showTabByName('details')">Cancel</button>
     </form>
     </div>
 
@@ -171,16 +173,16 @@
 </main>
 
 <script>
-function toggleEdit() {
-    document.getElementById('viewMode').classList.toggle("hidden");
-    document.getElementById('editMode').classList.toggle("hidden");
+function showTab(name, el) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('show'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('show');
+    el.classList.add('active');
 }
-function togglePassword() {
-    document.getElementById('passwordMode').classList.toggle("hidden");
-
-    document.getElementById('editMode').classList.add("hidden");
-
-    document.getElementById('viewMode').classList.add("hidden");
+function showTabByName(name) {
+    const tabs = document.querySelectorAll('.tab');
+    const map = ['details', 'edit', 'password'];
+    showTab(name, tabs[map.indexOf(name)]);
 }
 </script>
 

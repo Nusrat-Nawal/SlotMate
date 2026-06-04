@@ -105,6 +105,12 @@ body {
   width: auto;
 }
 
+.sample h3,p{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
 .bg-glow{
     position:fixed;
     width:400px;
