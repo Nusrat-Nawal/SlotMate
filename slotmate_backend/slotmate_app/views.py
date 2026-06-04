@@ -8,6 +8,15 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import SlotRequest, Match
 from .matching import calculate_mutual_score
 from django.db.models import Q
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from .models import Notification
+from django.contrib.auth.decorators import login_required
+import random
+from .models import RevealRequest
 # Create your views here.
 
 @login_required
@@ -116,7 +125,15 @@ def register_page(request):
         department = request.POST.get("department")
 
         username = email.split('@')[0]
-        
+        entered_code = request.POST.get('verification_code')
+
+        saved_code = request.session.get('verification_code')
+
+        if entered_code != saved_code:
+            messages.error(request,"Invalid verification code")
+            return redirect('register')
+        if User.objects.filter(email=email).exists():
+            return render(request, "register.html", {"error": "Email already registered! Please use another email."} )    
         if User.objects.filter(username=username).exists():
          return render(request, "register.html", {"error": "User already exists! Please use another email."} )
         
@@ -150,7 +167,30 @@ def login_page(request):
             return render(request, "login.html", {"error": "Invalid email or password."})
 
     return render(request, "login.html")
+def send_verification_email(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
 
+        if not email:
+            return JsonResponse({'status': 'error', 'message': 'Email is required'})
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'status': 'error', 'message': 'Email already registered'})
+        code = random.randint(100000, 999999)
+        request.session['verification_code'] = str(code)
+
+        try:
+            send_mail(
+                'SlotMate Verification Code',
+                f'Your SlotMate verification code is: {code}',
+                'slotmateproject@gmail.com',
+                [email],
+                fail_silently=False,
+            )
+            return JsonResponse({'status': 'success'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
 def create_request_page(request):
 
     any_day = False
@@ -225,12 +265,14 @@ def create_request_page(request):
 
                 # avoid duplicates
                 exists = Match.objects.filter(
+
                    Q(user_a=new_request.user, user_b=other.user) |
                    Q(user_a=other.user, user_b=new_request.user) 
+
                 ).exists()
 
                 if not exists:
-                    Match.objects.create(
+                    match = Match.objects.create(
                         user_a=new_request.user,
                         user_b=other.user,
 
@@ -241,9 +283,21 @@ def create_request_page(request):
                         score_b_to_a=b_to_a,
                         mutual_score=mutual
                     )
+                    Notification.objects.create(
+                        user=other.user,
+                        message=f"New match found: {new_request.current_course_code} ↔ {other.current_course_code}",
+                        notification_type="match",
+                        related_id=match.id
+                    )
 
+                    Notification.objects.create(
+                        user=request.user,
+                        message=f"You got a new match: {new_request.current_course_code}",
+                        notification_type="match",
+                        related_id=match.id
+                    )
+                
         return redirect("/my-requests/")
-
     return render(request, "create-request.html")
 
 def forget_password_page(request):
@@ -294,13 +348,216 @@ def matches_list_page(request):
 
 @login_required
 def match_detail_page(request, match_id):
-    match = Match.objects.get(id=match_id)
+    match = get_object_or_404(Match, id=match_id)
+
+    # current user er reveal request
+    my_reveal = RevealRequest.objects.filter(
+        match=match,
+        sender=request.user
+    ).first()
+
+    # other user er reveal request
+    other_reveal = RevealRequest.objects.filter(
+        match=match,
+        receiver=request.user
+    ).first()
 
     return render(request, "match-details.html", {
-        "match": match
-        })
-
-def notifications_page(request):
-    return render(request, "notifications.html")
+        "match": match,
+        "my_reveal": my_reveal,
+        "other_reveal": other_reveal,
+    })
+@login_required
 def profile_page(request):
-    return render(request, "profile.html")
+    user = request.user
+
+    return render(request, "profile.html", {
+        "user": user,
+        "total_requests": SlotRequest.objects.filter(user=user).count(),
+        "total_matches": Match.objects.filter(Q(user_a=user) | Q(user_b=user)).count(),
+        "active_requests": SlotRequest.objects.filter(user=user, status="Pending").count(),
+    })
+@login_required
+def update_profile(request):
+    if request.method == "POST":
+        user = request.user
+        profile = user.studentprofile
+
+        full_name = request.POST.get("full_name", "").split(" ", 1)
+
+        user.first_name = full_name[0]
+
+        if len(full_name) > 1:
+            user.last_name = full_name[1]
+
+        profile.university = request.POST.get("university")
+        profile.department = request.POST.get("department")
+
+        user.save()
+        profile.save()
+
+    return redirect("/profile/")
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        user = request.user
+
+        old = request.POST.get("old_password")
+        new = request.POST.get("new_password")
+        confirm = request.POST.get("confirm_password")
+
+        if not user.check_password(old):
+            messages.error(request, "Old password is incorrect")
+            return redirect("/profile/")
+
+        if new != confirm:
+            messages.error(request, "Passwords do not match")
+            return redirect("/profile/")
+
+        if len(new) < 8:
+            messages.error(request, "Password must be at least 8 characters")
+            return redirect("/profile/")
+
+        user.set_password(new)
+        user.save()
+
+        update_session_auth_hash(request, user)
+
+        messages.success(request, "Password updated successfully")
+
+    return redirect("/profile/")
+def logout_view(request):
+    logout(request)
+    return redirect('/login/')
+
+@login_required
+def notifications_page(request):
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by("-created_at")
+
+    for n in notifications:
+        if n.notification_type == "match" and n.related_id:
+            n.link = f"/match/{n.related_id}/"
+        elif n.notification_type in ["reveal_request", "reveal_accepted"] and n.related_id:
+            n.link = f"/match/{n.related_id}/"
+        else:
+            n.link = None
+
+    return render(request, "notification.html", {
+        "notification": notifications
+    })
+@login_required
+def send_reveal_request(request, match_id):
+    match = get_object_or_404(Match, id=match_id)
+
+    if match.user_a != request.user and match.user_b != request.user:
+        return redirect("/matches/")
+
+    if match.user_a == request.user:
+        receiver = match.user_b
+    else:
+        receiver = match.user_a
+
+    #already sent reveal request?
+    already_exists = RevealRequest.objects.filter(
+        match=match,
+        sender=request.user
+    ).exists()
+
+    if not already_exists:
+        reveal = RevealRequest.objects.create(
+            match=match,
+            sender=request.user,
+            receiver=receiver,
+            status="pending"
+        )
+        Notification.objects.create(
+            user=receiver,
+            message=f"Someone sent you a reveal request for match: {match.request_a.current_course_code} ↔ {match.request_b.current_course_code}",
+            notification_type="reveal_request",
+            related_id=match.id
+        )
+
+    return redirect(f"/match/{match.id}/")
+@login_required
+def accept_reveal(request, reveal_id):
+    obj = get_object_or_404(RevealRequest, id=reveal_id)
+    if obj.receiver == request.user:
+        obj.status = "accepted"
+        obj.save()
+
+        
+        match = obj.match
+        reveal_a = RevealRequest.objects.filter(match=match, sender=match.user_a).first()
+        reveal_b = RevealRequest.objects.filter(match=match, sender=match.user_b).first()
+
+        both_accepted = (
+            reveal_a and reveal_a.status == "accepted" and
+            reveal_b and reveal_b.status == "accepted"
+        )
+
+        if both_accepted:
+            Notification.objects.create(
+                user=obj.sender,
+                message="Both accepted! Identity is now revealed.",
+                notification_type="reveal_accepted",
+                related_id=match.id
+            )
+            Notification.objects.create(
+                user=request.user,
+                message="Both accepted! Identity is now revealed.",
+                notification_type="reveal_accepted",
+                related_id=match.id
+            )
+        else:
+            
+            Notification.objects.create(
+                user=obj.sender,
+                message="Your reveal request was accepted! Waiting for you to accept theirs.",
+                notification_type="reveal_accepted",
+                related_id=match.id
+            )
+
+    return redirect(f"/match/{obj.match.id}/")
+
+@login_required
+def reject_reveal(request, reveal_id):
+    obj = get_object_or_404(RevealRequest, id=reveal_id)
+    if obj.receiver == request.user:
+        obj.status = "rejected"
+        obj.save()
+    return redirect(f"/match/{obj.match.id}/")
+@login_required
+def respond_reveal_request(request, match_id):
+    match = get_object_or_404(Match, id=match_id)
+
+    reveal = RevealRequest.objects.filter(
+        match=match,
+        receiver=request.user
+    ).first()
+
+    if not reveal:
+        return redirect(f"/match/{match.id}/")
+
+    action = request.GET.get("action")
+
+    if action == "accept":
+        reveal.status = "accepted"
+        reveal.save()
+        Notification.objects.create(
+            user=reveal.sender,
+            message=f"Your reveal request was accepted! Click to see identity.",
+            notification_type="reveal_accepted",
+            related_id=match.id
+        )
+    elif action == "reject":
+        reveal.status = "rejected"
+        reveal.save()
+
+    return redirect(f"/match/{match.id}/")
+@login_required
+def delete_notification(request, notification_id):
+    notif = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notif.delete()
+    return redirect("/notifications/")

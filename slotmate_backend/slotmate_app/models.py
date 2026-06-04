@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 # Create your models here.
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -8,6 +9,17 @@ class StudentProfile(models.Model):
     
     def __str__(self):
         return self.user.username
+        
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+
+    notification_type = models.CharField(max_length=50, null=True, blank=True)
+    related_id = models.IntegerField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
 class SlotRequest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     #Current Slots
@@ -46,4 +58,31 @@ class Match(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user_a", "user_b")   
+        unique_together = ("user_a", "user_b")  
+    @property
+    def a_reveal_status(self):
+        reveal = RevealRequest.objects.filter(match=self, sender=self.user_a).first()
+        return reveal.status if reveal else "not_sent"
+
+    @property
+    def b_reveal_status(self):
+        reveal = RevealRequest.objects.filter(match=self, sender=self.user_b).first()
+        return reveal.status if reveal else "not_sent" 
+
+class RevealRequest(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_reveals")
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_reveals")
+
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("pending", "Pending"),
+            ("accepted", "Accepted"),
+            ("rejected", "Rejected"),
+        ],
+        default="pending"
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
