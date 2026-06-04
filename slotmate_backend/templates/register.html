@@ -57,7 +57,7 @@
         <small class="error" id="emailError"></small>
         <div class="verify-box">
         <button type="button" class="verify-btn" onclick="sendCode()"> Send Verification Code </button>
-       <input type="text" id="verificationCode" placeholder="Enter verification code" oninput="clearError('verifyError')">
+       <input type="text" id="verificationCode" name="verification_code" placeholder="Enter verification code" oninput="clearError('verifyError')">
        <small class="error" id="verifyError"></small>
 
       </div>
@@ -113,7 +113,7 @@
         <span>I agree to Terms & Privacy Policy</span>
       </div>
       
-      <button type="submit" class="btn-register">Sign Up </button>
+      <button type="submit" onclick="registerUser()" class="btn-register">Sign Up </button>
 
       </form>
     </div>

@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Notifications</title>
+
+<link rel="stylesheet" href="{% static 'css/global.css' %}">
+<link rel="stylesheet" href="{% static 'css/notification.css' %}">
+</head>
+
+<body>
+
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+<div class="bg"></div>
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="logo">SlotMate</div>
+        <div class="slogan">Notifications</div>
+    </div>
+
+    <a href="/index/" class="back-btn"> ← Back to Home </a>
+
+</header>
+
+<main class="container">
+
+<div class="notif-card">
+
+{% for n in notification %}
+
+    <div class="notif-item {% if not n.is_read %}unread{% endif %}">
+
+        <div class="notif-left">
+            <div class="notif-icon"></div>
+
+            <div>
+                <div class="notif-text">
+
+        {% if n.notification_type == "reveal_request" and n.related_id %}
+            <a href="/match/{{ n.related_id }}/">{{ n.message }}</a>
+
+        {% elif n.notification_type == "reveal_accepted" and n.related_id %}
+            <a href="/match/{{ n.related_id }}/">{{ n.message }}</a>
+
+            {% elif n.notification_type == "match" and n.related_id %}
+                <a href="/index/">{{ n.message }}</a>
+
+        {% else %}
+            <a href="/index/">{{ n.message }}</a>
+        {% endif %}
+
+        </div>
+
+                <div class="notif-time">
+                    {{ n.created_at|date:"M d, Y • h:i A" }}
+                </div>
+            </div>
+        </div>
+        <div class="notif-actions-menu">
+                <span class="dots">⋮</span>
+
+            <div class="dropdown">
+                <a href="/notification/delete/{{ n.id }}/" class="delete-btn">
+                    Delete
+                </a>
+            </div>
+        
+        </div>
+       
+    </div>
+
+{% empty %}
+
+<div class="empty-state">
+
+    <div class="empty-bell"></div>
+
+    <h2>No Notifications Yet</h2>
+
+    <p>
+        When someone matches with your request or interacts
+        with your activity, notifications will appear here.
+    </p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</main>
+
+</body>
+</html>

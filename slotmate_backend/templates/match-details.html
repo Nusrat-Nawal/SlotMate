@@ -98,20 +98,69 @@
 </div>
 </div>
 
-
-<!-- Info Reveal button-->
+<!-- Info Reveal section-->
 <div class="reveal-section glass-card">
 
-    <h3>Want to reveal identity?</h3>
+    {% with reveal_a=match.a_reveal_status reveal_b=match.b_reveal_status %}
 
-    <a href="#" class="reveal-btn">
-        Reveal Request
-    </a>
-    <p>Both users must agree before personal details are shown.</p>
+    {% if reveal_a == "accepted" and reveal_b == "accepted" %}
+        
+        <div class="reveal-success">
+            <p class="reveal-success-title">Identity Revealed </p>
+            {% if request.user == match.user_a %}
+                <p class="reveal-name">{{ match.user_b.get_full_name }}</p>
+                <a href="mailto:{{ match.user_b.email }}" class="reveal-email">{{ match.user_b.email }}</a>
+            {% else %}
+                <p class="reveal-name">{{ match.user_a.get_full_name }}</p>
+                <a href="mailto:{{ match.user_a.email }}" class="reveal-email">{{ match.user_a.email }}</a>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <h3>Want to Reveal Identity?</h3>
+        <p class="reveal-note">Both users must accept before personal details are shown.</p>
+
+        {% if other_reveal and other_reveal.status == "pending" %}
+            
+            <p class="reveal-msg">Someone wants to reveal identity with you!</p>
+            <div class="reveal-actions">
+                <a href="/reveal/accept/{{ other_reveal.id }}/" class="reveal-btn accept"> Accept</a>
+                <a href="/reveal/reject/{{ other_reveal.id }}/" class="reveal-btn reject"> Reject</a>
+            </div>
+
+        {% elif other_reveal and other_reveal.status == "accepted" and my_reveal and my_reveal.status == "pending" %}
+           
+            <p class="reveal-msg">They accepted your request! Accept theirs to reveal identity.</p>
+            <div class="reveal-actions">
+                <a href="/reveal/accept/{{ other_reveal.id }}/" class="reveal-btn accept"> Accept</a>
+                <a href="/reveal/reject/{{ other_reveal.id }}/" class="reveal-btn reject"> Reject</a>
+            </div>
+
+        {% elif other_reveal and other_reveal.status == "rejected" %}
+            <p class="reveal-msg">You rejected the reveal request.</p>
+
+        {% elif my_reveal and my_reveal.status == "pending" %}
+            
+            <p class="reveal-msg"> Waiting for the other user to send their request...</p>
+
+        {% elif my_reveal and my_reveal.status == "accepted" %}
+           
+            <p class="reveal-msg">You accepted. Waiting for the other user to accept too...</p>
+
+        {% elif my_reveal and my_reveal.status == "rejected" %}
+            <p class="reveal-msg">Your reveal request was rejected.</p>
+
+        {% else %}
+            
+            <a href="/reveal/send/{{ match.id }}/" class="reveal-btn">Send Reveal Request</a>
+        {% endif %}
+
+    {% endif %}
+
+    {% endwith %}
 
 </div>
 
-</div>
 
 </main>
 
