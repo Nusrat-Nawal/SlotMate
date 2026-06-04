@@ -190,6 +190,25 @@ body {
 .status.medium { color: #f59e0b !important; }
 .status.low { color: #22c5c2 !important; }
 
+.notif-link {
+    position: relative;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: #EC4899;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 999px;
+    line-height: 1.4;
+    min-width: 18px;
+    text-align: center;
+}
+
 @media (max-width: 600px){
   .container{
     padding: 15px;

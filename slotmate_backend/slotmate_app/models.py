@@ -58,7 +58,7 @@ class Match(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user_a", "user_b")  
+        unique_together = ("request_a", "request_b")  
     @property
     def a_reveal_status(self):
         reveal = RevealRequest.objects.filter(match=self, sender=self.user_a).first()

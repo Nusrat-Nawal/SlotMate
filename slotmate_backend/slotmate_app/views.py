@@ -27,8 +27,14 @@ def index(request):
     top_matches = all_matches.order_by("-mutual_score")[:4]
     total_matches = all_matches.count()
 
-    successful_matches = all_matches.count()
-    active_requests = SlotRequest.objects.filter(user=request.user).count()
+    successful_matches = 0
+    for m in all_matches:
+        reveal_a = RevealRequest.objects.filter(match=m, sender=m.user_a).first()
+        reveal_b = RevealRequest.objects.filter(match=m, sender=m.user_b).first()
+        if reveal_a and reveal_b and reveal_a.status == "accepted" and reveal_b.status == "accepted":
+            successful_matches += 1
+
+    active_requests = SlotRequest.objects.filter(user=request.user , status="Pending").count()
 
     success_rate = (
         (successful_matches / total_matches) * 100
@@ -36,83 +42,88 @@ def index(request):
     )
     insight = calculate_insight(request.user)
 
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+ 
     context = {
         "user": request.user,
         "matches": top_matches,
         "active_requests": active_requests,
+        "total_matches": total_matches,
         "successful_matches": successful_matches,
         "overall_match": round(success_rate, 1),
         "insight": insight,
         "reveal_system_ready": True,
+        "unread_notifications": unread_count,
     }
 
     return render( request, "index.html" , context)
 
 def calculate_insight(user):
-    requests = SlotRequest.objects.filter(user=user)
+    matches = Match.objects.filter(
+        Q(user_a=user) | Q(user_b=user)
+    ).order_by("-mutual_score")
 
-    if not requests.exists():
-        return {
-            "course": 0,
-            "section": 0,
-            "faculty": 0,
-            "time": 0,
-            "day": 0
-        }
-    matches =Match.objects.filter(
-        Q(request_a__in=requests) | Q(request_b__in=requests)
-    )
-    total =matches.count()
+    if not matches.exists():
+        return {"course": 0, "section": 0, "faculty": 0, "time": 0, "day": 0}
 
-    if total == 0:
-        return {
-            "course": 0,
-            "section": 0,
-            "faculty": 0,
-            "time": 0,
-            "day": 0
-        }
-    matches =Match.objects.filter(
-        Q(request_a__in=requests) | Q(request_b__in=requests)
-    )
-    total =matches.count()
+    top = matches.first()
 
-    if total == 0:
-        return {
-            "course": 0,
-            "section": 0,
-            "faculty": 0,
-            "time": 0,
-            "day": 0
-        }
+    req_mine = top.request_a if top.user_a == user else top.request_b
+    req_other = top.request_b if top.user_a == user else top.request_a
 
-    same_course = 0
-    same_section = 0
-    same_faculty = 0
-    time_match = 0
-    day_match = 0
-
-    for m in matches:
-        if m.request_a.current_course_code == m.request_b.current_course_code:
-            same_course += 1
-
-        if m.request_a.current_section == m.request_b.current_section:
-            same_section += 1
-
-        if m.request_a.current_faculty == m.request_b.current_faculty:
-            same_faculty += 1
-
-        if m.request_a.current_time == m.request_b.current_time:
-            time_match += 1
-        if m.request_a.current_days == m.request_b.current_days:    
-            day_match += 1
+    def cat_score(category):
+    
+        if category == "course":
+            val = 35 if req_mine.current_course_code == req_other.preferred_course_code else 0
+            return round((val / 35) * 100)
+        elif category == "section":
+            if req_other.any_section:
+                val = 16
+            elif req_mine.current_section == req_other.preferred_section:
+                val = 20
+            else:
+                val = 0
+            return round((val / 20) * 100)
+        elif category == "faculty":
+            if req_other.any_faculty:
+                val = 12
+            elif req_mine.current_faculty == req_other.preferred_faculty:
+                val = 15
+            else:
+                val = 0
+            return round((val / 15) * 100)
+        elif category == "time":
+            if req_other.any_time:
+                val = 12
+            elif req_mine.current_time == req_other.preferred_time:
+                val = 15
+            else:
+                val = 0
+            return round((val / 15) * 100)
+        elif category == "day":
+            if req_other.any_day:
+                val = 12
+            else:
+                days_mine = set((req_mine.current_days or "").split(","))
+                days_other = set((req_other.preferred_days or "").split(","))
+                overlap = days_mine & days_other
+                if not days_other:
+                    val = 12
+                elif len(overlap) == len(days_other):
+                    val = 15
+                elif len(overlap) > 0:
+                    val = 12
+                else:
+                    val = 0
+            return round((val / 15) * 100)
+        return 0
 
     return {
-        "course": round((same_course / total) * 100, 1),
-        "section": round((same_section / total) * 100, 1),
-        "faculty": round((same_faculty / total) * 100, 1),
-        "time": round((time_match / total) * 100, 1),
-        "day": round((day_match / total) * 100, 1),
+        "course": cat_score("course"),
+        "section": cat_score("section"),
+        "faculty": cat_score("faculty"),
+        "time": cat_score("time"),
+        "day": cat_score("day"),
     }
 
 def register_page(request):
@@ -266,8 +277,8 @@ def create_request_page(request):
                 # avoid duplicates
                 exists = Match.objects.filter(
 
-                   Q(user_a=new_request.user, user_b=other.user) |
-                   Q(user_a=other.user, user_b=new_request.user) 
+                   Q(request_a=new_request, request_b=other) |
+                   Q(request_a=other, request_b=new_request)
 
                 ).exists()
 
@@ -305,10 +316,11 @@ def forget_password_page(request):
 
 @login_required
 def my_requests_page(request):
-    user_requests = (
-        SlotRequest.objects.filter(user=request.user)
-        .order_by('-created_at')
-    )
+    status_filter = request.GET.get("status")
+    query = SlotRequest.objects.filter(user=request.user)
+    if status_filter:
+        query = query.filter(status=status_filter)
+    user_requests = query.order_by('-created_at')
 
     return render(request, "my-requests.html", {
         "requests": user_requests
@@ -318,6 +330,11 @@ def my_requests_page(request):
 def delete_request(request, request_id):
 
     req = get_object_or_404(SlotRequest, id=request_id, user=request.user)
+    
+    Match.objects.filter(
+        Q(request_a=req) | Q(request_b=req)
+    ).delete()
+    
     req.delete()
 
     return redirect("/my-requests/")
@@ -361,9 +378,18 @@ def match_detail_page(request, match_id):
         match=match,
         receiver=request.user
     ).first()
+    if match.user_a == request.user:
+       my_request = match.request_a
+       their_request = match.request_b
+    else:
+       my_request = match.request_b
+       their_request = match.request_a
 
+    
     return render(request, "match-details.html", {
         "match": match,
+        "my_request": my_request,
+        "their_request": their_request,
         "my_reveal": my_reveal,
         "other_reveal": other_reveal,
     })
@@ -435,6 +461,7 @@ def notifications_page(request):
     notifications = Notification.objects.filter(
         user=request.user
     ).order_by("-created_at")
+    notifications.update(is_read=True)
 
     for n in notifications:
         if n.notification_type == "match" and n.related_id:
