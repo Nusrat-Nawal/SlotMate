@@ -128,3 +128,5 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'slotmate10@gmail.com'
 EMAIL_HOST_PASSWORD = 'kfmiunaagaegzeix'  # Use an app password if you have 2FA enabled
+
+SESSION_COOKIE_AGE = 30 * 60

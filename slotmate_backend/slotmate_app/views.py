@@ -35,6 +35,7 @@ def index(request):
             successful_matches += 1
 
     active_requests = SlotRequest.objects.filter(user=request.user , status="Pending").count()
+    completed_swaps = SlotRequest.objects.filter(user=request.user, status="Completed").count()
 
     success_rate = (
         (successful_matches / total_matches) * 100
@@ -49,6 +50,7 @@ def index(request):
         "matches": top_matches,
         "active_requests": active_requests,
         "total_matches": total_matches,
+        "completed_swaps": completed_swaps,
         "successful_matches": successful_matches,
         "overall_match": round(success_rate, 1),
         "insight": insight,
@@ -265,7 +267,7 @@ def create_request_page(request):
         all_requests = SlotRequest.objects.filter(
           user__studentprofile__university=request.user.studentprofile.university,
           user__studentprofile__department=request.user.studentprofile.department
-)         .exclude(user=request.user)
+        ).exclude(user=request.user).exclude(status="Completed")
 
        # generate matches
         for other in all_requests:
@@ -324,6 +326,7 @@ def my_requests_page(request):
 
     return render(request, "my-requests.html", {
         "requests": user_requests
+        
     })
 
 @login_required
@@ -355,9 +358,19 @@ def delete_multiple(request):
 
 @login_required
 def matches_list_page(request):
+    filter_type = request.GET.get("filter")
     matches = Match.objects.filter(
         Q(user_a=request.user) | Q(user_b=request.user)
     ).order_by("-mutual_score")
+
+    if filter_type == "successful":
+        successful_ids = []
+        for m in matches:
+            reveal_a = RevealRequest.objects.filter(match=m, sender=m.user_a).first()
+            reveal_b = RevealRequest.objects.filter(match=m, sender=m.user_b).first()
+            if reveal_a and reveal_b and reveal_a.status == "accepted" and reveal_b.status == "accepted":
+                successful_ids.append(m.id)
+        matches = matches.filter(id__in=successful_ids)
 
     return render(request, "matches.html", {
         "matches": matches
@@ -509,6 +522,7 @@ def send_reveal_request(request, match_id):
         )
 
     return redirect(f"/match/{match.id}/")
+
 @login_required
 def accept_reveal(request, reveal_id):
     obj = get_object_or_404(RevealRequest, id=reveal_id)
@@ -521,32 +535,60 @@ def accept_reveal(request, reveal_id):
         reveal_a = RevealRequest.objects.filter(match=match, sender=match.user_a).first()
         reveal_b = RevealRequest.objects.filter(match=match, sender=match.user_b).first()
 
-        both_accepted = (
-            reveal_a and reveal_a.status == "accepted" and
-            reveal_b and reveal_b.status == "accepted"
-        )
+        if reveal_a and reveal_b:
+            if reveal_a.status == "accepted" and reveal_b.status == "accepted":
+                # Both accepted — reveal identity
+                match.request_a.status = "Completed"
+                match.request_a.save()
+                match.request_b.status = "Completed"
+                match.request_b.save()
 
-        if both_accepted:
-            Notification.objects.create(
-                user=obj.sender,
-                message="Both accepted! Identity is now revealed.",
-                notification_type="reveal_accepted",
-                related_id=match.id
-            )
-            Notification.objects.create(
-                user=request.user,
-                message="Both accepted! Identity is now revealed.",
-                notification_type="reveal_accepted",
-                related_id=match.id
-            )
+                Notification.objects.create(
+                  user=obj.sender,
+                  message="Both accepted! Identity is now revealed.",
+                  notification_type="reveal_accepted",
+                  related_id=match.id
+                )
+                Notification.objects.create(
+                  user=request.user,
+                  message="Both accepted! Identity is now revealed.",
+                  notification_type="reveal_accepted",
+                  related_id=match.id
+                )
         else:
-            
-            Notification.objects.create(
-                user=obj.sender,
-                message="Your reveal request was accepted! Waiting for you to accept theirs.",
-                notification_type="reveal_accepted",
-                related_id=match.id
-            )
+            if not reveal_b and reveal_a and reveal_a.sender == obj.sender:
+                RevealRequest.objects.create(
+                    match=match,
+                    sender=request.user,  # from User B
+                    receiver=obj.sender,   # to User A 
+                    status="accepted"      # Automatically accept
+                )
+                reveal_a.refresh_from_db()
+                if reveal_a.status == "accepted":
+                    match.request_a.status = "Completed"
+                    match.request_a.save()
+                    match.request_b.status = "Completed"
+                    match.request_b.save()
+
+                    Notification.objects.create(
+                        user=obj.sender,
+                        message="Both accepted! Identity is now revealed.",
+                        notification_type="reveal_accepted",
+                        related_id=match.id
+                    )
+                    Notification.objects.create(
+                        user=request.user,
+                        message="Both accepted! Identity is now revealed.",
+                        notification_type="reveal_accepted",
+                        related_id=match.id
+                    )
+                else:
+                    Notification.objects.create(
+                        user=obj.sender,
+                        message=f"{request.user.get_full_name()} accepted your reveal request!",
+                        notification_type="reveal_accepted",
+                        related_id=match.id
+                    )
 
     return redirect(f"/match/{obj.match.id}/")
 
@@ -556,6 +598,12 @@ def reject_reveal(request, reveal_id):
     if obj.receiver == request.user:
         obj.status = "rejected"
         obj.save()
+        Notification.objects.create(
+            user=obj.sender,
+            message="Your reveal request was rejected.",
+            notification_type="reveal_rejected",
+            related_id=obj.match.id
+        )
     return redirect(f"/match/{obj.match.id}/")
 @login_required
 def respond_reveal_request(request, match_id):
