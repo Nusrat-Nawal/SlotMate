@@ -48,8 +48,8 @@ class Match(models.Model):
     user_a = models.ForeignKey(User, on_delete=models.CASCADE, related_name="matches_as_a")
     user_b = models.ForeignKey(User, on_delete=models.CASCADE, related_name="matches_as_b")
 
-    request_a = models.ForeignKey(SlotRequest, on_delete=models.CASCADE, related_name="request_a")
-    request_b = models.ForeignKey(SlotRequest, on_delete=models.CASCADE, related_name="request_b")
+    request_a = models.ForeignKey(SlotRequest, on_delete=models.CASCADE,related_name="request_a")
+    request_b = models.ForeignKey(SlotRequest, on_delete=models.CASCADE,related_name="request_b")
 
     score_a_to_b = models.FloatField()
     score_b_to_a = models.FloatField()
