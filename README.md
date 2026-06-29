@@ -11,7 +11,7 @@ As a university student under an Open Credit System, we often do not get our pre
 
 Although section swapping is a common solution, finding a suitable swap partner manually is challenging. Students usually rely on social media posts, messaging groups, or personal networks, which is time-consuming and often unsuccessful.
 
-SlotMate is developed to solve this real-world problem by automatically matching students based on their current and preferred course sections, faculty, class time, and schedule preferences. Instead of searching manually, students receive intelligent compatibility-based matches and can safely reveal their contact information only after both parties mutually agree, making the entire section swapping process faster, more efficient, and privacy-friendly.
+This real-life experience motivated us to develop SlotMate, a platform that simplifies the section-swapping process by helping students find compatible swap partners more efficiently.
 
 
 ## Table of Contents
@@ -48,21 +48,23 @@ The system ensures privacy while making the slot swapping process faster, safer,
 
 ## Features
 
-1. User Registration & Login
+**1. User Registration & Login**
 
 * Secure registration with university email, system doesn't accept personal emails
 * User authentication through mail verification
 * Session-based login and Password change support
 
 
-2. Student Profile
+
+**2. Student Profile**
 
 * University
 * Department
 * Profile management
 
 
-3. Create Swap Request
+
+**3. Create Swap Request**
 
 Students can enter:
 
@@ -90,7 +92,8 @@ Flexible Preferences
 * Any Day
 
 
-4. Intelligent Match System
+
+**4. Intelligent Match System**
 
 Automatically calculates compatibility between requests.
 
@@ -108,7 +111,8 @@ Shows:
 * Compatibility Percentage
 
 
-5. Match Details
+
+**5. Match Details**
 
 Displays
 
@@ -118,7 +122,8 @@ Displays
 * Matching information
 
 
-6. Reveal Request System
+
+**6. Reveal Request System**
 
 Students can:
 
@@ -129,7 +134,8 @@ Students can:
 Personal information remains hidden until both students agree.
 
 
-7. Notifications
+
+**7. Notifications**
 
 Receive notifications for
 
@@ -139,7 +145,8 @@ Receive notifications for
 * Rejected requests
 
 
-8. Dashboard
+
+**8. Dashboard**
 
 Dashboard includes
 
@@ -148,7 +155,8 @@ Dashboard includes
 * Graphical Match Insight (Details of top match)
 
 
-9. Responsive Design
+
+**9. Responsive Design**
 
 Optimized for
 
@@ -210,31 +218,32 @@ This produces a fair compatibility percentage for both students.
 
 ## System Architecture
 
-User
-
-↓
-
+  User
+   
+   ↓ 
+    
 Django URLs
 
-↓
-
-Views
-
-↓
-
-Models
-
-↓
-
+   ↓
+    
+ Views
+  
+   ↓
+    
+ Models
+  
+   ↓
+    
 SQLite Database
 
-↓
-
+   ↓
+    
 Templates
 
-↓
+   ↓
+    
+ Browser
 
-Browser
 
 ---
 
@@ -309,9 +318,8 @@ Start server
 ```bash
 python manage.py runserver
 ```
-
 Open http link
-```
+
 ---
 
 ## Usage
@@ -336,33 +344,34 @@ Open http link
 
 ## Screenshots
 
-### Login
+**Login**
 
 
-### Register
+**Register**
 
 
-### Dashboard
+**Dashboard**
 
 
-### Create Request
+**Create Request**
 
 
-### My Requests
+**My Requests**
 
 
-### Matches
+**Matches**
 
 
-### Match Details
+**Match Details**
 
 
-### Notifications
+**Notifications**
 
 
-### Reveal Request
+**Reveal Request**
 
 
+---
 ## Future Improvements
 
 * AI-powered recommendation system
